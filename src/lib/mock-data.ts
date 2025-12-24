@@ -4,45 +4,45 @@ import type { User, Artwork } from './types';
 const users: User[] = [
   {
     id: 'user1',
-    username: 'CreativeSoul',
-    email: 'creative@example.com',
+    username: 'RongTuli',
+    email: 'anika@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar1/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Anika/100/100',
   },
   {
     id: 'user2',
-    username: 'ArtExplorer',
-    email: 'explorer@example.com',
+    username: 'ShilpiMon',
+    email: 'arjun@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar2/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Arjun/100/100',
   },
   {
     id: 'user3',
-    username: 'PixelPainter',
-    email: 'pixel@example.com',
+    username: 'ChobiWala',
+    email: 'priya@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar3/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Priya/100/100',
   },
   {
     id: 'user4',
-    username: 'DreamScaper',
-    email: 'dream@example.com',
+    username: 'SwapnoJal',
+    email: 'rohan@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar4/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Rohan/100/100',
   },
   {
     id: 'user5',
-    username: 'VisionaryVibes',
-    email: 'visionary@example.com',
+    username: 'DrishtiBodha',
+    email: 'isha@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar5/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Isha/100/100',
   },
   {
     id: 'user6',
-    username: 'ChromaCanvas',
-    email: 'chroma@example.com',
+    username: 'BornoPorichoy',
+    email: 'vikram@example.com',
     password: 'password123',
-    avatarUrl: 'https://picsum.photos/seed/avatar6/100/100',
+    avatarUrl: 'https://picsum.photos/seed/Vikram/100/100',
   },
 ];
 
@@ -51,11 +51,11 @@ const artworks: Artwork[] = PlaceHolderImages.map((img) => {
   const imgId = parseInt(img.id);
 
   if (imgId > 48) {
-    user = users[5]; // ChromaCanvas
+    user = users[5]; // BornoPorichoy
   } else if (imgId > 32) {
-    user = users[4]; // VisionaryVibes
+    user = users[4]; // DrishtiBodha
   } else if (imgId > 16) {
-    user = users[3]; // DreamScaper
+    user = users[3]; // SwapnoJal
   } else {
     // Distribute first 16 images among first 3 users
     user = users[(imgId - 1) % 3];
