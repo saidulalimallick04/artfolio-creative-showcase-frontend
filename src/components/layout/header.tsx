@@ -65,7 +65,7 @@ export default function Header() {
                 <ThemeToggle />
                 {user ? (
                     <>
-                    <Button asChild size="sm" className="rounded-full">
+                    <Button asChild size="sm" className="rounded-full hidden md:inline-flex">
                         <Link href="/upload">
                             <Plus className="mr-2 h-4 w-4" />
                             Upload
