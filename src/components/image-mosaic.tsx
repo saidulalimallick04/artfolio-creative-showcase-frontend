@@ -24,11 +24,11 @@ export default function ImageMosaic({ artworks }: ImageMosaicProps) {
                     alt={artwork.title}
                     width={500}
                     height={700}
-                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="w-full h-auto object-cover transition-transform duration-300 md:group-hover:scale-105"
                     data-ai-hint={artwork.imageHint}
                   />
                 </Link>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 transition-opacity duration-300 opacity-0 group-hover:opacity-100">
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
                   <h3 className="text-white font-bold truncate">{artwork.title}</h3>
                   <div className="flex items-center mt-2">
                     <Avatar className="h-6 w-6 mr-2 border-2 border-white">
