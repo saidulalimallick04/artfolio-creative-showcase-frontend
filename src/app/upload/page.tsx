@@ -94,12 +94,12 @@ export default function UploadPage() {
         <p className="text-muted-foreground mt-2">Add a new piece to your creative collection. Fill out the details and upload your file.</p>
       </header>
       
-      <div className="flex justify-center">
+      <div className="mx-auto max-w-5xl">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-full max-w-4xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
               {/* Image Preview and Upload Column */}
-              <div className="mb-6 md:mb-0">
+              <div className="space-y-2">
                 <FormField
                   control={form.control}
                   name="artwork"
@@ -121,7 +121,7 @@ export default function UploadPage() {
                             className={cn(
                               "aspect-[4/5] w-full rounded-lg border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center cursor-pointer transition-colors",
                               "hover:border-primary hover:bg-accent/50",
-                              { "border-solid border-border p-2": imagePreview }
+                              { "border-solid border-border bg-card p-2": imagePreview }
                             )}
                           >
                             {imagePreview ? (
@@ -136,6 +136,7 @@ export default function UploadPage() {
                               <div className="text-center text-muted-foreground p-4">
                                 <ImageIcon className="mx-auto h-12 w-12 mb-4" />
                                 <p className="font-semibold">Click to upload or drag & drop</p>
+
                                 <p className="text-xs mt-1">PNG, JPG, or WEBP (max 5MB)</p>
                               </div>
                             )}
@@ -146,7 +147,10 @@ export default function UploadPage() {
                               variant="destructive"
                               size="icon"
                               className="absolute top-4 right-4 h-8 w-8 rounded-full"
-                              onClick={() => form.setValue('artwork', null)}
+                              onClick={() => {
+                                form.setValue('artwork', null);
+                                form.resetField('artwork');
+                              }}
                             >
                               <X className="h-4 w-4" />
                               <span className="sr-only">Remove image</span>
@@ -161,14 +165,13 @@ export default function UploadPage() {
               </div>
 
               {/* Form Fields Column */}
-              <div className="space-y-6">
-                <Card className="md:shadow-none md:border-none md:p-0">
-                  <CardHeader className="p-0 mb-4 md:hidden">
-                    <CardTitle>Artwork Details</CardTitle>
-                    <CardDescription>Provide information about your new piece.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="p-0">
-                    <div className="grid gap-6">
+              <div className="space-y-6 flex flex-col">
+                <Card className="flex-1">
+                    <CardHeader>
+                        <CardTitle>Artwork Details</CardTitle>
+                        <CardDescription>Provide information about your new piece.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
                       <FormField
                         control={form.control}
                         name="title"
@@ -191,7 +194,7 @@ export default function UploadPage() {
                             <FormControl>
                               <Textarea 
                                 placeholder="Describe your artwork, the inspiration behind it, or the techniques you used." 
-                                className="min-h-[150px] md:min-h-[250px]"
+                                className="min-h-[150px] resize-none"
                                 {...field} 
                               />
                             </FormControl>
@@ -199,8 +202,7 @@ export default function UploadPage() {
                           </FormItem>
                         )}
                       />
-                    </div>
-                  </CardContent>
+                    </CardContent>
                 </Card>
                 <Button className="w-full" type="submit" size="lg">
                   <FileUp className="mr-2 h-4 w-4" /> Upload Artwork
