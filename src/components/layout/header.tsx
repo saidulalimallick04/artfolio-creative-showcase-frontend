@@ -18,8 +18,8 @@ export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full py-2 md:py-4">
-      <div className="container flex h-14 items-center rounded-2xl border bg-background/95 px-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full py-2 md:py-4 flex justify-center">
+      <div className="container flex h-14 max-w-screen-lg items-center rounded-2xl border bg-background/95 px-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6 lg:px-8">
         <div className="mr-4 flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <LayoutGrid className="h-6 w-6 text-primary" />
