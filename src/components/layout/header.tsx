@@ -12,19 +12,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutGrid, LogOut, User as UserIcon } from 'lucide-react';
+import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home } from 'lucide-react';
 
 export default function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-50 w-full py-2 md:py-4 flex justify-center">
-      <div className="container flex h-14 max-w-screen-lg items-center rounded-2xl border bg-background/95 px-4 shadow-lg backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6 lg:px-8">
-        <div className="mr-4 flex">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-14 max-w-screen-lg items-center">
+        <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
             <LayoutGrid className="h-6 w-6 text-primary" />
             <span className="font-bold font-headline text-lg">ArtFolio</span>
           </Link>
+          <nav className="flex items-center space-x-6 text-sm font-medium">
+            <Link href="/" className="transition-colors hover:text-foreground/80 text-foreground/60">
+              Home
+            </Link>
+            <Link href="/explore" className="transition-colors hover:text-foreground/80 text-foreground/60">
+              Explore
+            </Link>
+            {user && (
+              <Link href="/dashboard" className="transition-colors hover:text-foreground/80 text-foreground/60">
+                Dashboard
+              </Link>
+            )}
+          </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">
           {user ? (
@@ -51,6 +64,12 @@ export default function Header() {
                     <span>Profile</span>
                   </Link>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard">
+                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                    <span>Dashboard</span>
+                  </Link>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout}>
                   <LogOut className="mr-2 h-4 w-4" />
@@ -59,7 +78,7 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <nav className="flex items-center space-x-2">
+            <nav className="hidden md:flex items-center space-x-2">
               <Button asChild variant="ghost">
                 <Link href="/login">Login</Link>
               </Button>
