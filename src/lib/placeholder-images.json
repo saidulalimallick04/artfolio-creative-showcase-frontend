@@ -1,3 +1,100 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "1",
+      "description": "Abstract painting with blue and gold.",
+      "imageUrl": "https://images.unsplash.com/photo-1533208087231-c3618eab623c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxhYnN0cmFjdCUyMHBhaW50aW5nfGVufDB8fHx8MTc2NjQ5NTA2NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "abstract painting"
+    },
+    {
+      "id": "2",
+      "description": "Serene landscape of a mountain range at dawn.",
+      "imageUrl": "https://images.unsplash.com/photo-1612539473441-dfc1cefd5e1e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8bW91bnRhaW4lMjBsYW5kc2NhcGV8ZW58MHx8fHwxNzY2NTUwMDcyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "mountain landscape"
+    },
+    {
+      "id": "3",
+      "description": "A close-up of a colorful bird.",
+      "imageUrl": "https://images.unsplash.com/photo-1499995909106-2d6741de64ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8Y29sb3JmdWwlMjBiaXJkfGVufDB8fHx8MTc2NjU4NDI5NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "colorful bird"
+    },
+    {
+      "id": "4",
+      "description": "Monochrome street photography in a bustling city.",
+      "imageUrl": "https://images.unsplash.com/photo-1488034976201-ffbaa99cbf5c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxzdHJlZXQlMjBwaG90b2dyYXBoeXxlbnwwfHx8fDE3NjY1ODQyOTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "street photography"
+    },
+    {
+      "id": "5",
+      "description": "Digital art of a futuristic city.",
+      "imageUrl": "https://images.unsplash.com/photo-1553675559-5046b59a5ca5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxmdXR1cmlzdGljJTIwY2l0eXxlbnwwfHx8fDE3NjY0ODE2OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "futuristic city"
+    },
+    {
+      "id": "6",
+      "description": "Still life of a bowl of fruit.",
+      "imageUrl": "https://images.unsplash.com/photo-1620217310705-ea0af48e8158?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8c3RpbGwlMjBsaWZlfGVufDB8fHx8MTc2NjQ3MjgzNHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "still life"
+    },
+    {
+      "id": "7",
+      "description": "A dramatic coastal scene with large waves.",
+      "imageUrl": "https://images.unsplash.com/photo-1694308721895-0c0da35ba4b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxjb2FzdGFsJTIwc2NlbmV8ZW58MHx8fHwxNzY2NTg0Mjk0fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "coastal scene"
+    },
+    {
+      "id": "8",
+      "description": "Portrait of a woman with intricate jewelry.",
+      "imageUrl": "https://images.unsplash.com/photo-1552699611-e2c208d5d9cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxwb3J0cmFpdCUyMHdvbWFufGVufDB8fHx8MTc2NjUzOTE4NHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "portrait woman"
+    },
+    {
+      "id": "9",
+      "description": "Vibrant geometric pattern.",
+      "imageUrl": "https://images.unsplash.com/photo-1557411732-1797a9171fcf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxnZW9tZXRyaWMlMjBwYXR0ZXJufGVufDB8fHx8MTc2NjU2Mjc1NXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "geometric pattern"
+    },
+    {
+      "id": "10",
+      "description": "A field of wildflowers under a blue sky.",
+      "imageUrl": "https://images.unsplash.com/photo-1624953505153-77483b956c95?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxMHx8d2lsZGZsb3dlcnMlMjBmaWVsZHxlbnwwfHx8fDE3NjY1NzEwMTR8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "wildflowers field"
+    },
+    {
+      "id": "11",
+      "description": "An old library with towering bookshelves.",
+      "imageUrl": "https://images.unsplash.com/photo-1465929639680-64ee080eb3ed?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxvbGQlMjBsaWJyYXJ5fGVufDB8fHx8MTc2NjQ4MDM4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "old library"
+    },
+    {
+      "id": "12",
+      "description": "A fantasy creature in an enchanted forest.",
+      "imageUrl": "https://images.unsplash.com/photo-1765904999737-4992b132487f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxmYW50YXN5JTIwY3JlYXR1cmV8ZW58MHx8fHwxNzY2NTIwMTQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "fantasy creature"
+    },
+    {
+      "id": "13",
+      "description": "Minimalist architecture with clean lines.",
+      "imageUrl": "https://images.unsplash.com/photo-1527576539890-dfa815648363?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxtaW5pbWFsaXN0JTIwYXJjaGl0ZWN0dXJlfGVufDB8fHx8MTc2NjUyMzA3Nnww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "minimalist architecture"
+    },
+    {
+      "id": "14",
+      "description": "A nebula in deep space.",
+      "imageUrl": "https://images.unsplash.com/photo-1650365449083-b3113ff48337?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHxzcGFjZSUyMG5lYnVsYXxlbnwwfHx8fDE3NjY1ODIwNjh8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "space nebula"
+    },
+    {
+      "id": "15",
+      "description": "A delicious-looking plate of food.",
+      "imageUrl": "https://images.unsplash.com/photo-1519077336050-4ca5cac9d64f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHxmb29kJTIwcGxhdGV8ZW58MHx8fHwxNzY2NTA5OTI5fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "food plate"
+    },
+    {
+      "id": "16",
+      "description": "A vintage car on a desert road.",
+      "imageUrl": "https://images.unsplash.com/photo-1603039548092-fff996c2441c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx2aW50YWdlJTIwY2FyfGVufDB8fHx8MTc2NjU3NjY4M3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "vintage car"
+    }
+  ]
 }
