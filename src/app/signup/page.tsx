@@ -28,7 +28,7 @@ export default function SignupPage() {
     defaultValues: {
       username: '',
       email: '',
-      password: '',
+      password: 'password123', // Default mock password
     },
   });
 
@@ -82,19 +82,7 @@ export default function SignupPage() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              
               <Button type="submit" className="w-full">
                 Create an account
               </Button>
