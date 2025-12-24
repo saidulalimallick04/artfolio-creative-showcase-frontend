@@ -16,6 +16,7 @@ import {
 import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home, Plus, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -61,6 +62,7 @@ export default function Header() {
             </nav>
 
             <div className="flex items-center gap-2">
+                <ThemeToggle />
                 {user ? (
                     <>
                     <Button asChild size="sm" className="rounded-full">
