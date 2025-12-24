@@ -7,10 +7,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 const formSchema = z.object({
   username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
@@ -47,13 +47,15 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-10rem)] items-center justify-center p-4">
-      <Card className="mx-auto max-w-sm w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-headline">Sign Up</CardTitle>
-          <CardDescription>Enter your information to create an account</CardDescription>
-        </CardHeader>
-        <CardContent>
+    <div className="w-full lg:grid lg:min-h-[calc(100vh-10rem)] lg:grid-cols-2 xl:min-h-[calc(100vh-10rem)]">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 order-2 lg:order-1">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold font-headline">Create an Account</h1>
+            <p className="text-balance text-muted-foreground">
+              Enter your information to join our creative community.
+            </p>
+          </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
               <FormField
@@ -82,12 +84,8 @@ export default function SignupPage() {
                   </FormItem>
                 )}
               />
-              
               <Button type="submit" className="w-full">
                 Create an account
-              </Button>
-              <Button variant="outline" className="w-full" asChild>
-                <Link href="/">Cancel</Link>
               </Button>
             </form>
           </Form>
@@ -97,8 +95,23 @@ export default function SignupPage() {
               Login
             </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      <div className="relative hidden bg-muted lg:block order-1 lg:order-2">
+        <Image
+          src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1932&auto=format&fit=crop"
+          alt="Creative artwork"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover"
+          data-ai-hint="creative artwork"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-black/0" />
+        <div className="absolute bottom-10 left-10 text-white p-4">
+            <h2 className="text-4xl font-bold font-headline leading-tight">Join a World of <br/>Endless Creativity.</h2>
+            <p className="mt-4 max-w-md text-gray-200">Share your passion, discover new artists, and become part of our vibrant community.</p>
+        </div>
+      </div>
     </div>
   );
 }
