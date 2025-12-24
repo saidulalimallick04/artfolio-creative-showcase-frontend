@@ -23,10 +23,44 @@ const users: User[] = [
     password: 'password123',
     avatarUrl: 'https://picsum.photos/seed/avatar3/100/100',
   },
+  {
+    id: 'user4',
+    username: 'DreamScaper',
+    email: 'dream@example.com',
+    password: 'password123',
+    avatarUrl: 'https://picsum.photos/seed/avatar4/100/100',
+  },
+  {
+    id: 'user5',
+    username: 'VisionaryVibes',
+    email: 'visionary@example.com',
+    password: 'password123',
+    avatarUrl: 'https://picsum.photos/seed/avatar5/100/100',
+  },
+  {
+    id: 'user6',
+    username: 'ChromaCanvas',
+    email: 'chroma@example.com',
+    password: 'password123',
+    avatarUrl: 'https://picsum.photos/seed/avatar6/100/100',
+  },
 ];
 
-const artworks: Artwork[] = PlaceHolderImages.map((img, index) => {
-  const user = users[index % users.length];
+const artworks: Artwork[] = PlaceHolderImages.map((img) => {
+  let user: User;
+  const imgId = parseInt(img.id);
+
+  if (imgId > 48) {
+    user = users[5]; // ChromaCanvas
+  } else if (imgId > 32) {
+    user = users[4]; // VisionaryVibes
+  } else if (imgId > 16) {
+    user = users[3]; // DreamScaper
+  } else {
+    // Distribute first 16 images among first 3 users
+    user = users[(imgId - 1) % 3];
+  }
+
   return {
     id: img.id,
     title: img.description.split(' ').slice(0, 3).join(' '),
@@ -37,6 +71,7 @@ const artworks: Artwork[] = PlaceHolderImages.map((img, index) => {
     authorUsername: user.username,
   };
 });
+
 
 export function getArtworks(): Artwork[] {
   return artworks;
