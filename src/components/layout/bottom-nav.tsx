@@ -19,6 +19,8 @@ export default function BottomNav() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === href;
+    // For profile, we want to match /profile and /profile/[username]
+    if (href === '/profile') return pathname.startsWith('/profile');
     return pathname.startsWith(href);
   };
 
@@ -32,8 +34,10 @@ export default function BottomNav() {
             key={item.label}
             href={item.href}
             className={cn(
-              'flex flex-col items-center gap-1 text-muted-foreground transition-colors hover:text-primary',
-              isActive(item.href) && 'text-primary'
+              'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
+              isActive(item.href)
+                ? 'text-primary'
+                : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
             )}
           >
             <item.icon className="h-6 w-6" />
