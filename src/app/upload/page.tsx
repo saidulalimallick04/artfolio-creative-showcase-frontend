@@ -43,6 +43,7 @@ export default function UploadPage() {
     defaultValues: {
       title: '',
       description: '',
+      artwork: undefined,
     },
   });
 
