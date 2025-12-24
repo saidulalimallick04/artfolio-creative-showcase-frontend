@@ -77,6 +77,10 @@ export function getArtworks(): Artwork[] {
   return artworks;
 }
 
+export function getArtworkById(id: string): Artwork | undefined {
+  return artworks.find((artwork) => artwork.id === id);
+}
+
 export function getArtworksByUsername(username: string): Artwork[] {
   return artworks.filter((artwork) => artwork.authorUsername === username);
 }

@@ -18,7 +18,7 @@ export default function ImageMosaic({ artworks }: ImageMosaicProps) {
           <Card className="overflow-hidden group transition-all duration-300 hover:shadow-xl">
             <CardContent className="p-0">
               <div className="relative overflow-hidden">
-                <Link href={`/profile/${artwork.authorUsername}`}>
+                <Link href={`/art/${artwork.id}`}>
                   <Image
                     src={artwork.imageUrl}
                     alt={artwork.title}
@@ -29,14 +29,16 @@ export default function ImageMosaic({ artworks }: ImageMosaicProps) {
                   />
                 </Link>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 transition-opacity duration-300 opacity-100 md:opacity-0 md:group-hover:opacity-100">
-                  <h3 className="text-white font-bold truncate">{artwork.title}</h3>
-                  <div className="flex items-center mt-2">
+                    <Link href={`/art/${artwork.id}`}>
+                        <h3 className="text-white font-bold truncate">{artwork.title}</h3>
+                    </Link>
+                  <Link href={`/profile/${artwork.authorUsername}`} className="flex items-center mt-2 group/avatar">
                     <Avatar className="h-6 w-6 mr-2 border-2 border-white">
                       <AvatarImage src={`https://picsum.photos/seed/${artwork.authorUsername}/100/100`} />
                       <AvatarFallback>{artwork.authorUsername.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <span className="text-white text-sm">{artwork.authorUsername}</span>
-                  </div>
+                    <span className="text-white text-sm group-hover/avatar:underline">{artwork.authorUsername}</span>
+                  </Link>
                 </div>
               </div>
             </CardContent>
