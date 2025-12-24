@@ -10,7 +10,7 @@ export default function Footer() {
             <span className="font-bold font-headline text-lg">ArtFolio</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} ArtFolio. All rights reserved.
+            © {new Date().getFullYear()} saidulalimallick studio. All rights reserved.
           </p>
         </div>
       </div>
