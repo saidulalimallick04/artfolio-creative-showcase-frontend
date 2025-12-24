@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { href: '/', icon: Home, label: 'Home' },
   { href: '/explore', icon: Compass, label: 'Explore' },
-  // The upload button will be handled separately
+  { href: '/upload', icon: Plus, label: 'Upload', auth: true },
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
   { href: '/profile', icon: User, label: 'Profile', auth: true },
 ];
@@ -27,8 +27,6 @@ export default function BottomNav() {
   };
 
   const filteredNavItems = navItems.filter(item => !item.auth || (item.auth && user));
-  const navLinks = filteredNavItems.filter(item => item.href !== '/dashboard');
-  const dashboardLink = filteredNavItems.find(item => item.href === '/dashboard');
 
   if (!user) {
      return (
@@ -54,8 +52,11 @@ export default function BottomNav() {
      );
   }
 
-  const leftItems = filteredNavItems.slice(0, 2);
-  const rightItems = filteredNavItems.slice(2);
+  const mainNavItems = filteredNavItems.filter(item => item.href !== '/upload');
+  const uploadItem = filteredNavItems.find(item => item.href === '/upload');
+
+  const leftItems = mainNavItems.slice(0, 2);
+  const rightItems = mainNavItems.slice(2);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
@@ -76,14 +77,16 @@ export default function BottomNav() {
           </Link>
         ))}
 
-        <div className="flex-grow flex justify-center">
-            <Button asChild size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg -translate-y-4">
-                <Link href="/dashboard">
-                    <Plus className="h-6 w-6" />
-                    <span className="sr-only">Upload</span>
-                </Link>
-            </Button>
-        </div>
+        {uploadItem && (
+            <div className="flex-grow flex justify-center">
+                <Button asChild size="icon" className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg -translate-y-4">
+                    <Link href={uploadItem.href}>
+                        <Plus className="h-6 w-6" />
+                        <span className="sr-only">{uploadItem.label}</span>
+                    </Link>
+                </Button>
+            </div>
+        )}
 
         {rightItems.map((item) => (
           <Link

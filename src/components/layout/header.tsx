@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home } from 'lucide-react';
+import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home, Plus } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +60,13 @@ export default function Header() {
 
             <div className="flex items-center gap-2">
                 {user ? (
+                    <>
+                    <Button asChild size="sm" className="rounded-full">
+                        <Link href="/upload">
+                            <Plus className="mr-2 h-4 w-4" />
+                            Upload
+                        </Link>
+                    </Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -89,6 +96,12 @@ export default function Header() {
                                     <span>Dashboard</span>
                                 </Link>
                             </DropdownMenuItem>
+                             <DropdownMenuItem asChild>
+                                <Link href="/upload">
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    <span>Upload</span>
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={logout}>
                                 <LogOut className="mr-2 h-4 w-4" />
@@ -96,6 +109,7 @@ export default function Header() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    </>
                 ) : (
                     <nav className="flex items-center gap-2">
                         <Button asChild variant="ghost" className="rounded-full">
