@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -12,7 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home, Plus } from 'lucide-react';
+import { LayoutGrid, LogOut, User as UserIcon, Compass, LayoutDashboard, Home, Plus, Users } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +23,8 @@ export default function Header() {
 
   const navItems = [
     { href: '/', label: 'Home', icon: Home },
-    { href: '/explore', label: 'Explore', icon: Compass },
+    { href: '/explore', label: 'Artworks', icon: Compass },
+    { href: '/artists', label: 'Artists', icon: Users },
     { href: '/dashboard', label: 'Dashboard', auth: true, icon: LayoutDashboard },
   ];
   
