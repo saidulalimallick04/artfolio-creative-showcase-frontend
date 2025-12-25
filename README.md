@@ -2,7 +2,7 @@
 
 ArtFolio is a modern, visually appealing web application designed as a creative showcase for artists to share their digital artwork and connect with a community of fellow creators and enthusiasts.
 
-[![Project Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)](https://artfolio-demo.vercel.app/)
+[![Project Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)](https://artfolio-creative-showcase.vercel.app/)
 
 ## ✨ Features
 
@@ -38,8 +38,8 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/artfolio.git
-    cd artfolio
+    git clone https://github.com/saidulalimallick04/artfolio-creative-showcase.git
+    cd artfolio-creative-showcase
     ```
 
 2.  **Install dependencies:**
