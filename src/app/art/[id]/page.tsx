@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { getArtworkById } from '@/actions/artworks_action';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, Share2, Heart } from 'lucide-react';
+import { MessageSquare, Heart } from 'lucide-react';
 import ArtworkDisplay from '@/components/artwork-display';
+import { ShareButton } from '@/components/share-button';
 import BackButton from '@/components/back-button';
 import { cookies } from 'next/headers';
 import ArtworkActions from '@/components/artwork-actions';
@@ -86,33 +87,29 @@ export default async function ArtworkPage({ params }: ArtworkPageProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-2">
-            <Button className="flex-1 rounded-full" size="lg">
-              <Heart className="mr-2 h-4 w-4" />
-              Like
-            </Button>
-            <Button variant="outline" className="flex-1 rounded-full" size="lg">
-              <Share2 className="mr-2 h-4 w-4" />
-              Share
-            </Button>
-          </div>
+          <Button className="flex-1 rounded-full" size="lg">
+            <Heart className="mr-2 h-4 w-4" />
+            Like
+          </Button>
+          <ShareButton artworkId={id} title={artwork.title} />
+        </div>
 
-          {/* Comments Placeholder */}
-          <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
-            <div className="p-6 space-y-4">
-              <div className="flex items-center gap-2 font-semibold">
-                <MessageSquare className="h-4 w-4" />
-                <h3>Comments</h3>
-              </div>
-              <div className="p-6 bg-muted/50 rounded-lg border border-dashed text-center space-y-1">
-                <p className="text-sm font-medium">Discussion Disabled</p>
-                <p className="text-xs text-muted-foreground">Comments will be enabled in a future update.</p>
-              </div>
+        {/* Comments Placeholder */}
+        <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+          <div className="p-6 space-y-4">
+            <div className="flex items-center gap-2 font-semibold">
+              <MessageSquare className="h-4 w-4" />
+              <h3>Comments</h3>
+            </div>
+            <div className="p-6 bg-muted/50 rounded-lg border border-dashed text-center space-y-1">
+              <p className="text-sm font-medium">Discussion Disabled</p>
+              <p className="text-xs text-muted-foreground">Comments will be enabled in a future update.</p>
             </div>
           </div>
-
         </div>
+
       </div>
     </div>
+
   );
 }

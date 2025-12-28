@@ -61,17 +61,21 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="w-full lg:grid lg:min-h-[calc(100vh-10rem)] lg:grid-cols-2 xl:min-h-[calc(100vh-10rem)]">
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 order-2 lg:order-1">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold font-headline">Create an Account</h1>
-            <p className="text-balance text-muted-foreground">
+    <div className="w-full h-screen flex overflow-hidden bg-background">
+      {/* Left Side - Signup Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative overflow-y-auto">
+        <div className="w-full max-w-[400px] space-y-8 animate-in fade-in slide-in-from-left-4 duration-500 my-auto">
+
+          {/* Header */}
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-3xl font-bold tracking-tight font-headline">Create an Account</h1>
+            <p className="text-sm text-muted-foreground">
               Enter your information to join our creative community.
             </p>
           </div>
+
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="username"
@@ -79,7 +83,13 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="your_username" autoComplete="off" {...field} value={field.value ?? ''} />
+                      <Input
+                        placeholder="your_username"
+                        autoComplete="off"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -92,7 +102,14 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input type="email" placeholder="m@example.com" autoComplete="username" {...field} value={field.value ?? ''} />
+                      <Input
+                        type="email"
+                        placeholder="m@example.com"
+                        autoComplete="username"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,7 +122,14 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="******" autoComplete="new-password" {...field} value={field.value ?? ''} />
+                      <Input
+                        type="password"
+                        placeholder="******"
+                        autoComplete="new-password"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -118,39 +142,62 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input type="password" placeholder="******" autoComplete="new-password" {...field} value={field.value ?? ''} />
+                      <Input
+                        type="password"
+                        placeholder="******"
+                        autoComplete="new-password"
+                        {...field}
+                        value={field.value ?? ''}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40">
                 Create an account
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{' '}
-            <Link href="/login" className="underline text-primary">
-              Login
-            </Link>
+          <div className="text-center text-sm">
+            <p className="text-muted-foreground">
+              Already have an account?{' '}
+              <Link href="/login" className="font-semibold text-primary hover:underline underline-offset-4 transition-colors">
+                Login
+              </Link>
+            </p>
           </div>
         </div>
       </div>
-      <div className="relative hidden bg-muted lg:block order-1 lg:order-2">
-        <Image
-          src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1932&auto=format&fit=crop"
-          alt="Creative artwork"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover"
-          data-ai-hint="creative artwork"
-          unoptimized
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-black/0" />
-        <div className="absolute bottom-10 left-10 text-white p-4">
-          <h2 className="text-4xl font-bold font-headline leading-tight">Join a World of <br />Endless Creativity.</h2>
-          <p className="mt-4 max-w-md text-gray-200">Share your passion, discover new artists, and become part of our vibrant community.</p>
+
+      {/* Right Side - Image Panel */}
+      <div className="hidden lg:flex lg:w-1/2 p-6 flex-col justify-center items-center bg-transparent relative">
+        {/* Container for the rounded image */}
+        <div className="relative w-[40vw] h-[75vh] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/10">
+          <Image
+            src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1932&auto=format&fit=crop"
+            alt="Creative artwork"
+            fill
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            data-ai-hint="creative artwork"
+            sizes="(max-width: 1024px) 100vw, 80vw"
+            unoptimized
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-12 text-white z-10">
+            <div className="space-y-4 max-w-lg">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/10 text-sm font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                Featured Artist
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold font-headline leading-tight">Join a World of <br />Endless Creativity.</h2>
+              <p className="text-white/80 text-lg">Share your passion, discover new artists, and become part of our vibrant community.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
