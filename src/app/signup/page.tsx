@@ -16,6 +16,10 @@ const formSchema = z.object({
   username: z.string().min(3, { message: 'Username must be at least 3 characters.' }),
   email: z.string().email({ message: 'Please enter a valid email.' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
+  confirmPassword: z.string().min(6, { message: 'Confirm Password must be at least 6 characters.' }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
 });
 
 export default function SignupPage() {
@@ -29,19 +33,29 @@ export default function SignupPage() {
       username: '',
       email: '',
       password: 'password123', // Default mock password
+      confirmPassword: 'password123',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const success = signup(values.username, values.email, values.password);
-    if (success) {
-      toast({ title: 'Account created!', description: "You've been logged in." });
-      router.push('/profile');
-    } else {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      // Only send necessary fields to backend
+      const success = await signup(values.username, values.email, values.password);
+      if (success) {
+        toast({ title: 'Account created!', description: "You've been logged in." });
+        router.push('/profile');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Signup failed.',
+          description: 'A user with that username or email may already exist.',
+        });
+      }
+    } catch (e) {
       toast({
         variant: 'destructive',
-        title: 'Signup failed.',
-        description: 'A user with that username or email may already exist.',
+        title: 'Signup error.',
+        description: 'Something went wrong.',
       });
     }
   }
@@ -65,7 +79,7 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="your_username" {...field} />
+                      <Input placeholder="your_username" autoComplete="off" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -78,7 +92,33 @@ export default function SignupPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input type="email" placeholder="m@example.com" autoComplete="username" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="******" autoComplete="new-password" {...field} value={field.value ?? ''} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="******" autoComplete="new-password" {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,11 +145,12 @@ export default function SignupPage() {
           height="1080"
           className="h-full w-full object-cover"
           data-ai-hint="creative artwork"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-black/0" />
         <div className="absolute bottom-10 left-10 text-white p-4">
-            <h2 className="text-4xl font-bold font-headline leading-tight">Join a World of <br/>Endless Creativity.</h2>
-            <p className="mt-4 max-w-md text-gray-200">Share your passion, discover new artists, and become part of our vibrant community.</p>
+          <h2 className="text-4xl font-bold font-headline leading-tight">Join a World of <br />Endless Creativity.</h2>
+          <p className="mt-4 max-w-md text-gray-200">Share your passion, discover new artists, and become part of our vibrant community.</p>
         </div>
       </div>
     </div>

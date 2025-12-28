@@ -10,10 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { getUsers } from '@/lib/mock-data';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import type { User } from '@/lib/types';
 import Image from 'next/image';
+import { LayoutGrid } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -24,7 +22,6 @@ export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
   const { toast } = useToast();
-  const mockUsers = getUsers();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -34,71 +31,91 @@ export default function LoginPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    handleLogin(values.email, values.password);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    await handleLogin(values.email, values.password);
   }
 
-  function handleLogin(email: string, password?: string) {
-    const success = login(email, password || 'password123');
-    if (success) {
-      toast({ title: 'Login successful!', description: 'Welcome back.' });
-      router.push('/profile');
-    } else {
+  async function handleLogin(email: string, password?: string) {
+    try {
+      const success = await login(email, password || 'password123');
+      if (success) {
+        toast({ title: 'Login successful!', description: 'Welcome back.' });
+        router.push('/profile');
+      } else {
+        toast({
+          variant: 'destructive',
+          title: 'Login failed.',
+          description: 'Invalid email or password.',
+        });
+      }
+    } catch (e) {
       toast({
         variant: 'destructive',
-        title: 'Login failed.',
-        description: 'Invalid email or password.',
+        title: 'Login error.',
+        description: 'Something went wrong.',
       });
     }
   }
 
   return (
-    <div className="w-full lg:grid lg:min-h-[calc(100vh-10rem)] lg:grid-cols-2 xl:min-h-[calc(100vh-10rem)]">
-      <div className="relative hidden bg-muted lg:block">
-        <Image
-          src="https://images.unsplash.com/photo-1549492423-400259a5e5a4?q=80&w=1974&auto=format&fit=crop"
-          alt="Creative artwork"
-          width="1920"
-          height="1080"
-          className="h-full w-full object-cover"
-          data-ai-hint="creative artwork"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-black/10" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white">
-          <div className="w-full max-w-md rounded-xl bg-white/10 p-6 backdrop-blur-sm border border-white/20">
-            <h2 className="text-2xl font-bold mb-4 font-headline">Log in as an artist</h2>
-            <p className="mb-6 text-gray-200">Select a mock artist to explore the application.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {mockUsers.map((user: User) => (
-                <button
-                  key={user.id}
-                  className="w-full text-left p-3 rounded-lg bg-white/10 hover:bg-white/20 transition-colors duration-300 flex items-center"
-                  onClick={() => handleLogin(user.email, user.password)}
-                >
-                  <Avatar className="h-10 w-10 mr-3 border-2 border-white/50">
-                    <AvatarImage src={user.avatarUrl} alt={user.username} />
-                    <AvatarFallback>{user.username.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold text-white">{user.username}</p>
-                    <p className="text-xs text-gray-300">{user.email}</p>
-                  </div>
-                </button>
-              ))}
+    <div className="w-full h-screen flex overflow-hidden bg-background">
+      {/* Left Side - Image Panel */}
+      <div className="hidden lg:flex lg:w-1/2 p-6 flex-col justify-center items-center bg-transparent relative">
+        {/* Container for the rounded image */}
+        <div className="relative w-[40vw] h-[75vh] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-border/10">
+          <Image
+            src="https://images.unsplash.com/flagged/photo-1572392640988-ba48d1a74457?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Creative artwork"
+            fill
+            className="object-cover transition-transform duration-700 hover:scale-105"
+            priority
+            sizes="(max-width: 1024px) 100vw, 80vw"
+            unoptimized
+          />
+
+          {/* Overlay Content */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-12 text-white z-10">
+            <div className="space-y-4 max-w-lg">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/10 text-sm font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+                </span>
+                Featured Artist
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold font-headline leading-tight">
+                "Every artist was first an amateur."
+              </h2>
+              <p className="text-white/80 text-lg">
+                Join our community of creators and start your journey today.
+              </p>
             </div>
           </div>
         </div>
+        {/* Decorative elements behind/around if needed, but keeping it clean for now */}
       </div>
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold font-headline">Login</h1>
-            <p className="text-balance text-muted-foreground">
-              Enter your email below to login to your account
+
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-12 relative">
+        <div className="w-full max-w-[400px] space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+
+          {/* Logo / Header */}
+          <div className="flex flex-col space-y-2 text-center">
+            <Link href="/" className="mx-auto flex items-center gap-2 mb-2 transition-transform hover:scale-105">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <LayoutGrid className="h-6 w-6 text-primary" />
+              </div>
+            </Link>
+            <h1 className="text-2xl font-bold tracking-tight font-headline">Welcome back</h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your email to sign in to your account
             </p>
           </div>
+
+          {/* Form */}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -106,7 +123,11 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="m@example.com" {...field} />
+                      <Input
+                        placeholder="name@example.com"
+                        {...field}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,22 +140,31 @@ export default function LoginPage() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input type="password" {...field} />
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        {...field}
+                        className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40">
+                Sign In
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="underline text-primary">
-              Sign up
-            </Link>
+
+          {/* Footer */}
+          <div className="text-center text-sm">
+            <p className="text-muted-foreground">
+              Don&apos;t have an account?{' '}
+              <Link href="/signup" className="font-semibold text-primary hover:underline underline-offset-4 transition-colors">
+                Sign up
+              </Link>
+            </p>
           </div>
         </div>
       </div>

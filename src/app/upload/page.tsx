@@ -7,14 +7,16 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
+import { createArtwork } from '@/actions/artworks_action';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { FileUp, Image as ImageIcon, X } from 'lucide-react';
+import { FileUp, Image as ImageIcon, Loader2, ArrowLeft, Upload, Eye, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -37,6 +39,7 @@ export default function UploadPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,7 +58,7 @@ export default function UploadPage() {
       if (file && ACCEPTED_IMAGE_TYPES.includes(file.type)) {
         const previewUrl = URL.createObjectURL(file);
         setImagePreview(previewUrl);
-        
+
         return () => URL.revokeObjectURL(previewUrl);
       }
     } else {
@@ -68,150 +71,288 @@ export default function UploadPage() {
       router.push('/login');
     }
   }, [user, router]);
-  
-  if (!user) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <p>Redirecting to login...</p>
-      </div>
-    );
+
+  const handleResetImage = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    form.setValue('artwork', undefined);
+    form.resetField('artwork');
+  };
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('title', values.title);
+      formData.append('description', values.description);
+      formData.append('image', values.artwork[0]);
+
+      const result = await createArtwork(formData);
+
+      if (result.success) {
+        toast({
+          title: 'Upload Successful!',
+          description: `Your artwork "${values.title}" has been submitted.`,
+        });
+        // Delay redirect slightly for effect? No, immediate is better.
+        router.push('/dashboard');
+        router.refresh();
+      } else {
+        toast({
+          title: 'Upload Failed',
+          description: result.error || 'Something went wrong.',
+          variant: 'destructive',
+        });
+      }
+    } catch (e) {
+      toast({
+        title: 'Error',
+        description: 'Failed to upload artwork.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('Form submitted:', values);
-    toast({
-      title: 'Upload Successful!',
-      description: `Your artwork "${values.title}" has been submitted.`,
-    });
-    form.reset();
-    setImagePreview(null);
-    router.push('/dashboard');
+  if (!user) {
+    return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8 max-w-4xl mx-auto text-center">
-        <h1 className="font-headline text-3xl md:text-4xl font-bold">Upload New Artwork</h1>
-        <p className="text-muted-foreground mt-2">Add a new piece to your creative collection. Fill out the details and upload your file.</p>
-      </header>
-      
-      <div className="mx-auto max-w-5xl">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 md:gap-12">
-              {/* Image Preview and Upload Column */}
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="artwork"
-                  render={({ field: { onChange, ...rest } }) => (
-                    <FormItem>
-                      <FormLabel>Artwork File</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input
-                            id="artwork-upload"
-                            type="file"
-                            className="sr-only"
-                            accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                            onChange={(e) => onChange(e.target.files)}
-                            {...rest}
-                          />
-                          <label
-                            htmlFor="artwork-upload"
-                            className={cn(
-                              "aspect-[4/5] w-full rounded-lg border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center cursor-pointer transition-colors",
-                              "hover:border-primary hover:bg-accent/50",
-                              { "border-solid border-border bg-card p-2": imagePreview }
-                            )}
-                          >
-                            {imagePreview ? (
-                              <Image
-                                src={imagePreview}
-                                alt="Artwork preview"
-                                width={400}
-                                height={500}
-                                className="w-full h-full object-contain rounded-md"
-                              />
-                            ) : (
-                              <div className="text-center text-muted-foreground p-4">
-                                <ImageIcon className="mx-auto h-12 w-12 mb-4" />
-                                <p className="font-semibold">Click to upload or drag & drop</p>
+    <div className="min-h-screen bg-muted/30 relative">
+      {/* Background Ambience */}
+      <div className="absolute inset-x-0 top-0 h-[400px] bg-gradient-to-b from-primary/5 to-transparent -z-10" />
+      {imagePreview && (
+        <div className="fixed inset-0 w-full h-full -z-20 overflow-hidden pointer-events-none">
+          <Image
+            src={imagePreview}
+            alt="Background"
+            fill
+            className="object-cover opacity-[0.03] blur-3xl scale-110"
+          />
+        </div>
+      )}
 
-                                <p className="text-xs mt-1">PNG, JPG, or WEBP (max 5MB)</p>
-                              </div>
-                            )}
-                          </label>
-                          {imagePreview && (
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="icon"
-                              className="absolute top-4 right-4 h-8 w-8 rounded-full"
-                              onClick={() => {
-                                form.setValue('artwork', null);
-                                form.resetField('artwork');
-                              }}
-                            >
-                              <X className="h-4 w-4" />
-                              <span className="sr-only">Remove image</span>
-                            </Button>
-                          )}
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Navigation */}
+        <div className="flex items-center justify-between mb-8">
+          <Button asChild variant="ghost" className="pl-0 hover:bg-transparent hover:text-primary transition-colors">
+            <Link href={`/dashboard`} className="flex items-center gap-2">
+              <ArrowLeft className="h-5 w-5" />
+              <span className="text-lg font-medium">Back to Dashboard</span>
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+
+          {/* Left Column: Image Preview (Sticky) */}
+          <div className="lg:col-span-5 lg:sticky lg:top-24 space-y-6 order-2 lg:order-1">
+            <div className="bg-card/50 backdrop-blur-sm rounded-2xl border p-2 shadow-sm">
+              <div className="aspect-[4/5] relative rounded-xl overflow-hidden bg-muted group">
+                {imagePreview ? (
+                  <>
+                    <Image
+                      src={imagePreview}
+                      alt="Artwork preview"
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
+                      <div className="text-white text-center p-4">
+                        <Eye className="h-8 w-8 mx-auto mb-2 opacity-80" />
+                        <p className="font-semibold text-lg">Current Preview</p>
+                        <p className="text-sm opacity-80">Ready to upload</p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="h-full flex flex-col items-center justify-center text-muted-foreground">
+                    <ImageIcon className="h-16 w-16 mb-4 opacity-50" />
+                    <p>Select an image to preview</p>
+                  </div>
+                )}
               </div>
+            </div>
+            <div className="text-center px-4">
+              <p className="text-sm text-muted-foreground">
+                "Every artist was first an amateur." — Ralph Waldo Emerson
+              </p>
+            </div>
+          </div>
 
-              {/* Form Fields Column */}
-              <div className="space-y-6 flex flex-col">
-                <Card className="flex-1">
-                    <CardHeader>
-                        <CardTitle>Artwork Details</CardTitle>
-                        <CardDescription>Provide information about your new piece.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
+          {/* Right Column: Upload Form */}
+          <div className="lg:col-span-7 order-1 lg:order-2">
+            <Card className="border-none shadow-xl bg-card/80 backdrop-blur-md overflow-hidden">
+              {/* Decorative header gradient */}
+              <div className="h-2 w-full bg-gradient-to-r from-primary to-primary/50" />
+              <CardHeader className="pb-8 pt-8 px-8 md:px-10">
+                <CardTitle className="font-headline text-3xl md:text-4xl font-bold">
+                  Upload Artwork
+                </CardTitle>
+                <CardDescription className="text-base mt-2">
+                  Add a new piece to your creative collection. Share your vision with the world.
+                </CardDescription>
+              </CardHeader>
+
+              <CardContent className="px-8 md:px-10 pb-10">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+                    {/* Image Upload Field */}
+                    <FormField
+                      control={form.control}
+                      name="artwork"
+                      render={({ field: { value, onChange, ...rest } }) => (
+                        <FormItem>
+                          <FormLabel className="text-base font-semibold">Artwork Image</FormLabel>
+                          <FormControl>
+                            <div className="space-y-3">
+                              <div className="relative group cursor-pointer">
+                                <Input
+                                  id="artwork-upload"
+                                  type="file"
+                                  className="sr-only"
+                                  accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                                  onChange={(e) => onChange(e.target.files)}
+                                  onClick={(e) => { (e.target as HTMLInputElement).value = '' }} // Fix: Allow re-selecting the same file
+                                  {...rest}
+                                />
+                                <label
+                                  htmlFor="artwork-upload"
+                                  className={cn(
+                                    "flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-muted-foreground/20 transition-all",
+                                    "hover:border-primary/50 hover:bg-primary/5 cursor-pointer"
+                                  )}
+                                >
+                                  <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                    <Upload className="h-6 w-6" />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-foreground">Click to upload file</p>
+                                    <p className="text-xs text-muted-foreground mt-0.5">JPG, PNG or WEBP (Max 5MB)</p>
+                                  </div>
+                                </label>
+                              </div>
+
+                              {/* Selected File Info & Reset */}
+                              <div className="space-y-3">
+                                {imagePreview && (
+                                  <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-muted lg:hidden">
+                                    <Image
+                                      src={imagePreview}
+                                      alt="Preview"
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  </div>
+                                )}
+
+                                {artworkFile && artworkFile.length > 0 && (
+                                  <div className="flex items-center justify-between p-3 bg-muted/40 rounded-lg border animate-in fade-in slide-in-from-top-2">
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                      <div className="h-8 w-8 rounded bg-background border flex items-center justify-center shrink-0">
+                                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                                      </div>
+                                      <span className="text-sm font-medium truncate max-w-[180px] sm:max-w-xs">
+                                        {artworkFile[0].name}
+                                      </span>
+                                    </div>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleResetImage}
+                                      className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                                      title="Remove image"
+                                    >
+                                      <X className="h-4 w-4 mr-1" />
+                                      <span className="text-xs">Remove</span>
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="space-y-6">
                       <FormField
                         control={form.control}
                         name="title"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Title</FormLabel>
+                            <FormLabel className="text-base font-semibold">Title</FormLabel>
                             <FormControl>
-                              <Input placeholder="My masterpiece" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder="Describe your artwork, the inspiration behind it, or the techniques you used." 
-                                className="min-h-[150px] resize-none"
-                                {...field} 
+                              <Input
+                                placeholder="Name your masterpiece"
+                                {...field}
+                                className="h-12 text-lg bg-background/50 focus:bg-background transition-all"
                               />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
-                    </CardContent>
-                </Card>
-                <Button className="w-full" type="submit" size="lg">
-                  <FileUp className="mr-2 h-4 w-4" /> Upload Artwork
-                </Button>
-              </div>
-            </div>
-          </form>
-        </Form>
+
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-base font-semibold">Description</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="What inspired this piece? Share its story..."
+                                className="min-h-[180px] text-base resize-none bg-background/50 focus:bg-background transition-all leading-relaxed p-4"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="pt-4 flex gap-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        className="flex-1 h-12 text-base rounded-full"
+                        onClick={() => router.back()}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        size="lg"
+                        disabled={isSubmitting}
+                        className="flex-[2] h-12 text-base rounded-full shadow-lg hover:shadow-xl transition-all"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FileUp className="mr-2 h-5 w-5" /> Upload Artwork
+                          </>
+                        )}
+                      </Button>
+                    </div>
+
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

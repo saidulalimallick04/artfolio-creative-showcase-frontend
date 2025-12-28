@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/components/auth-provider';
+import { TokenRefresher } from '@/components/auth/TokenRefresher';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/layout/header';
+import ScrollProgress from '@/components/scroll-progress';
 import Footer from '@/components/layout/footer';
 import BottomNav from '@/components/layout/bottom-nav';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -26,20 +28,22 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
         >
-            <AuthProvider>
+          <AuthProvider>
+            <TokenRefresher />
             <div className="flex min-h-screen flex-col pb-20 md:pb-0">
-                <Header />
-                <main className="flex-1 pt-28">{children}</main>
-                <Footer />
-                <BottomNav />
+              <ScrollProgress />
+              <Header />
+              <main className="flex-1 pt-20">{children}</main>
+              <Footer />
+              <BottomNav />
             </div>
             <Toaster />
-            </AuthProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

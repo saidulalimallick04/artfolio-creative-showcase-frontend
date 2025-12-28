@@ -13,5 +13,7 @@ export type User = {
   username: string;
   email: string;
   password?: string;
-  avatarUrl: string;
+  profile_image?: string;
+  full_name?: string;
+  bio?: string;
 };

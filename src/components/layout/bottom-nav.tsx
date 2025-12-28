@@ -3,15 +3,29 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, LayoutDashboard, User, Plus, Users } from 'lucide-react';
+import { Home, Compass, LayoutDashboard, User, Plus, Users, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 const navItems = [
   { href: '/', icon: Home, label: 'Home' },
-  { href: '/explore', icon: Compass, label: 'Artworks' },
-  { href: '/artists', icon: Users, label: 'Artists' },
+  {
+    id: 'explore',
+    icon: Compass,
+    label: 'Explore',
+    isDropdown: true,
+    children: [
+      { href: '/explore', label: 'Artworks', icon: ImageIcon },
+      { href: '/artists', label: 'Artists', icon: Users }
+    ]
+  },
   { href: '/upload', icon: Plus, label: 'Upload', auth: true, isCentral: true },
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', auth: true },
   { href: '/profile', icon: User, label: 'Profile', auth: true },
@@ -23,49 +37,104 @@ export default function BottomNav() {
 
   const isActive = (href: string) => {
     if (href === '/') return pathname === href;
-    // For profile, we want to match /profile and /profile/[username]
     if (href === '/profile') return pathname.startsWith('/profile');
     return pathname.startsWith(href);
   };
 
-  const centralItem = navItems.find(item => item.isCentral && (!item.auth || (item.auth && user)));
-  const regularItems = navItems.filter(item => !item.isCentral && (!item.auth || (item.auth && user)));
+  const isExploreActive = pathname.startsWith('/explore') || pathname.startsWith('/artists');
+
+  const centralItem = navItems.find(item => 'isCentral' in item && item.isCentral && (!item.auth || (item.auth && user)));
+  const regularItems = navItems.filter(item => !('isCentral' in item && item.isCentral) && (!item.auth || (item.auth && user)));
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-20 bg-transparent md:hidden">
-      <div className="relative flex h-16 items-center justify-around rounded-t-2xl border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
+      <div className="relative flex h-16 items-center justify-around rounded-full border border-primary/20 bg-gradient-to-r from-background/95 via-background/90 to-background/95 backdrop-blur-xl shadow-2xl shadow-primary/10 supports-[backdrop-filter]:bg-background/60 transition-all duration-300 hover:shadow-primary/20">
+        {/* Decorative gradient overlay */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-t from-primary/5 to-transparent pointer-events-none" />
+
         {regularItems.map((item, index) => {
           // Insert the central button placeholder in the middle
           if (centralItem && index === Math.floor(regularItems.length / 2)) {
-            return <div key="central-placeholder" className="h-full w-16" />;
+            return (
+              <div key={`split-${index}`} className="contents">
+                <div className="h-full w-16" />
+                {renderNavItem(item)}
+              </div>
+            )
           }
-          return (
-            <Link
-              key={item.label}
-              href={item.href}
+
+          return renderNavItem(item);
+        })}
+
+        {centralItem && 'href' in centralItem && centralItem.href && (
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
+            {/* Pulsing glow effect */}
+            <div className="absolute inset-0 rounded-full bg-primary/30 blur-xl animate-pulse" />
+
+            <Button
+              asChild
+              size="icon"
+              className="relative h-16 w-16 rounded-full bg-gradient-to-br from-primary via-primary to-primary/80 text-primary-foreground shadow-2xl shadow-primary/50 hover:shadow-primary/70 hover:scale-110 transition-all duration-300 ring-4 ring-background"
+            >
+              <Link href={centralItem.href as string}>
+                <Plus className="h-8 w-8 transition-transform duration-300 group-hover:rotate-90" />
+                <span className="sr-only">{centralItem.label}</span>
+              </Link>
+            </Button>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+
+  function renderNavItem(item: typeof navItems[0]) {
+    if ('isDropdown' in item && item.isDropdown && 'children' in item) {
+      return (
+        <DropdownMenu key={item.label}>
+          <DropdownMenuTrigger asChild>
+            <button
               className={cn(
                 'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
-                isActive(item.href)
+                isExploreActive
                   ? 'text-primary'
                   : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
               )}
             >
               <item.icon className="h-6 w-6" />
               <span className="text-xs font-medium">{item.label}</span>
-            </Link>
-          );
-        })}
-        {centralItem && (
-             <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-                <Button asChild size="icon" className="h-16 w-16 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90">
-                    <Link href={centralItem.href}>
-                        <Plus className="h-8 w-8" />
-                        <span className="sr-only">{centralItem.label}</span>
-                    </Link>
-                </Button>
-              </div>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="center" className="mb-2">
+            {item.children.map((child) => (
+              <DropdownMenuItem key={child.href} asChild>
+                <Link href={child.href} className="flex items-center gap-2 cursor-pointer">
+                  <child.icon className="h-4 w-4" />
+                  <span>{child.label}</span>
+                </Link>
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    }
+
+    // Safe check for href mainly for TS comfort, though logic ensures regular items have href
+    if (!('href' in item)) return null;
+
+    return (
+      <Link
+        key={item.label}
+        href={item.href as string}
+        className={cn(
+          'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
+          isActive(item.href as string)
+            ? 'text-primary'
+            : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
         )}
-      </div>
-    </nav>
-  );
+      >
+        <item.icon className="h-6 w-6" />
+        <span className="text-xs font-medium">{item.label}</span>
+      </Link>
+    );
+  }
 }
