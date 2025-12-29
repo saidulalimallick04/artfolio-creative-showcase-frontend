@@ -12,11 +12,29 @@ import ArtworkActions from '@/components/artwork-actions';
 import { Separator } from '@/components/ui/separator';
 import PageUtilities from '@/components/page-utilities';
 
+import { Metadata } from 'next';
+
 type ArtworkPageProps = {
   params: Promise<{
     id: string;
   }>;
 };
+
+export async function generateMetadata({ params }: ArtworkPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const result = await getArtworkById(id);
+
+  if (!result.success || !result.data) {
+    return {
+      title: 'Artwork Not Found',
+    };
+  }
+
+  return {
+    title: result.data.title,
+    description: result.data.description || `View ${result.data.title} on ArtFolio.`,
+  };
+}
 
 export default async function ArtworkPage({ params }: ArtworkPageProps) {
   const { id } = await params;

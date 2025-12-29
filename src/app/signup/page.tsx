@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -24,32 +25,50 @@ const formSchema = z.object({
 
 export default function SignupPage() {
   const router = useRouter();
-  const { signup } = useAuth();
+  const { signup, user } = useAuth();
   const { toast } = useToast();
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const preferredPage = localStorage.getItem('landingPage') || '/';
+      router.push(preferredPage);
+    }
+  }, [user, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: '',
       email: '',
-      password: 'password123', // Default mock password
-      confirmPassword: 'password123',
+      password: '',
+      confirmPassword: '',
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     try {
       // Only send necessary fields to backend
       const success = await signup(values.username, values.email, values.password);
+
+      // Simulate a bit of delay so the user can see the progress bar
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
       if (success) {
-        toast({ title: 'Account created!', description: "You've been logged in." });
-        router.push('/profile');
+        toast({
+          title: 'Registration successful!',
+          description: "Please log in to continue."
+        });
+        router.push('/login');
       } else {
         toast({
           variant: 'destructive',
           title: 'Signup failed.',
           description: 'A user with that username or email may already exist.',
         });
+        setIsLoading(false);
       }
     } catch (e) {
       toast({
@@ -57,6 +76,7 @@ export default function SignupPage() {
         title: 'Signup error.',
         description: 'Something went wrong.',
       });
+      setIsLoading(false);
     }
   }
 
@@ -89,6 +109,7 @@ export default function SignupPage() {
                         {...field}
                         value={field.value ?? ''}
                         className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -109,6 +130,7 @@ export default function SignupPage() {
                         {...field}
                         value={field.value ?? ''}
                         className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -129,6 +151,7 @@ export default function SignupPage() {
                         {...field}
                         value={field.value ?? ''}
                         className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -149,14 +172,26 @@ export default function SignupPage() {
                         {...field}
                         value={field.value ?? ''}
                         className="bg-muted/30 border-input/50 focus:bg-background h-11"
+                        disabled={isLoading}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40">
-                Create an account
+              <Button
+                type="submit"
+                className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40 relative overflow-hidden"
+                disabled={isLoading}
+              >
+                <span className="relative z-10 flex items-center justify-center gap-2">
+                  {isLoading ? 'Creating account...' : 'Create an account'}
+                </span>
+
+                {/* Progress Bar */}
+                {isLoading && (
+                  <div className="absolute bottom-0 left-0 h-1 bg-white/50 animate-[progress_2s_ease-in-out_infinite] w-full origin-left" />
+                )}
               </Button>
             </form>
           </Form>
@@ -179,7 +214,7 @@ export default function SignupPage() {
             src="https://images.unsplash.com/photo-1511497584788-876760111969?q=80&w=1932&auto=format&fit=crop"
             alt="Creative artwork"
             fill
-            className="object-cover transition-transform duration-700 hover:scale-105"
+            className="object-cover animate-ken-burns"
             data-ai-hint="creative artwork"
             sizes="(max-width: 1024px) 100vw, 80vw"
             unoptimized

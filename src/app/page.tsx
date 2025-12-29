@@ -1,5 +1,6 @@
 import { getArtworks } from '@/actions/artworks_action';
 import PlaceholderMosaic from '@/components/placeholder-mosaic';
+import HeroSection from '@/components/home/hero-section';
 import placeholderData from '@/lib/placeholder-images.json';
 
 export default async function Home() {
@@ -16,14 +17,12 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <header className="text-center mb-12">
-        <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight mb-4">
-          Welcome to ArtFolio
-        </h1>
-        <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-          Discover a world of creativity. A place for artists to share their digital memories and artwork with the world.
-        </p>
-      </header>
+      <HeroSection />
+
+      <div className="mt-20 mb-12 text-center">
+        <h2 className="font-headline text-3xl font-bold tracking-tight mb-4">Featured Collection</h2>
+        <div className="h-1 w-24 bg-primary mx-auto rounded-full" />
+      </div>
 
       <PlaceholderMosaic images={randomPlaceholders} />
     </div>

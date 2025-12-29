@@ -58,12 +58,12 @@ export default function BottomNav() {
             return (
               <div key={`split-${index}`} className="contents">
                 <div className="h-full w-16" />
-                {renderNavItem(item)}
+                <NavItem item={item} isActive={isActive} isExploreActive={isExploreActive} />
               </div>
             )
           }
 
-          return renderNavItem(item);
+          return <NavItem key={item.label} item={item} isActive={isActive} isExploreActive={isExploreActive} />;
         })}
 
         {centralItem && 'href' in centralItem && centralItem.href && (
@@ -86,55 +86,73 @@ export default function BottomNav() {
       </div>
     </nav>
   );
+}
 
-  function renderNavItem(item: typeof navItems[0]) {
-    if ('isDropdown' in item && item.isDropdown && 'children' in item) {
-      return (
-        <DropdownMenu key={item.label}>
-          <DropdownMenuTrigger asChild>
-            <button
-              className={cn(
-                'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
-                isExploreActive
-                  ? 'text-primary'
-                  : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
-              )}
-            >
-              <item.icon className="h-6 w-6" />
-              <span className="text-xs font-medium">{item.label}</span>
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" align="center" className="mb-2">
-            {item.children.map((child) => (
-              <DropdownMenuItem key={child.href} asChild>
-                <Link href={child.href} className="flex items-center gap-2 cursor-pointer">
-                  <child.icon className="h-4 w-4" />
-                  <span>{child.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    }
+import { ChevronUp } from 'lucide-react';
+import { useState } from 'react';
 
-    // Safe check for href mainly for TS comfort, though logic ensures regular items have href
-    if (!('href' in item)) return null;
+function NavItem({ item, isActive, isExploreActive }: { item: any; isActive: (href: string) => boolean; isExploreActive: boolean }) {
+  const [isOpen, setIsOpen] = useState(false);
 
+  if ('isDropdown' in item && item.isDropdown && 'children' in item) {
     return (
-      <Link
-        key={item.label}
-        href={item.href as string}
-        className={cn(
-          'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
-          isActive(item.href as string)
-            ? 'text-primary'
-            : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
-        )}
-      >
-        <item.icon className="h-6 w-6" />
-        <span className="text-xs font-medium">{item.label}</span>
-      </Link>
+      <DropdownMenu onOpenChange={setIsOpen} modal={false}>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={cn(
+              'flex flex-col items-center justify-center gap-0.5 p-1 rounded-lg transition-colors w-16 group',
+              isExploreActive || isOpen
+                ? 'text-primary'
+                : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+            )}
+          >
+            <div className="relative">
+              <item.icon className="h-6 w-6 mb-1" />
+              {/* Indicator Arrow */}
+              <span className={cn(
+                "absolute -top-2 left-1/2 -translate-x-1/2 transition-transform duration-300",
+                isOpen ? "rotate-180 text-primary" : "text-muted-foreground/50"
+              )}>
+                <ChevronUp className="h-3 w-3" />
+              </span>
+            </div>
+            <span className="text-[10px] font-medium">{item.label}</span>
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side="top"
+          align="center"
+          sideOffset={10}
+          className="mb-2 p-1 min-w-[140px] rounded-xl border-border/50 shadow-xl bg-background/95 backdrop-blur-md"
+        >
+          {item.children.map((child: any) => (
+            <DropdownMenuItem key={child.href} asChild className="rounded-lg focus:bg-primary/10 focus:text-primary cursor-pointer my-0.5">
+              <Link href={child.href} className="flex items-center gap-2.5 py-2 px-3">
+                <child.icon className="h-4 w-4" />
+                <span className="font-medium">{child.label}</span>
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
     );
   }
+
+  // Safe check for href mainly for TS comfort, though logic ensures regular items have href
+  if (!('href' in item)) return null;
+
+  return (
+    <Link
+      href={item.href as string}
+      className={cn(
+        'flex flex-col items-center justify-center gap-1 p-2 rounded-lg transition-colors w-16',
+        isActive(item.href as string)
+          ? 'text-primary'
+          : 'text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground'
+      )}
+    >
+      <item.icon className="h-6 w-6" />
+      <span className="text-[10px] font-medium">{item.label}</span>
+    </Link>
+  );
 }

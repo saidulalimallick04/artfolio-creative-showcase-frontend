@@ -34,12 +34,18 @@ const formSchema = z.object({
     ),
 });
 
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 export default function UploadPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // State for success dialog
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [submittedData, setSubmittedData] = useState<{ title: string; description: string; imageUrl: string | null } | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,6 +85,18 @@ export default function UploadPage() {
     form.resetField('artwork');
   };
 
+  const handleCreateAnother = () => {
+    setShowSuccessDialog(false);
+    form.reset();
+    setImagePreview(null);
+    setSubmittedData(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleGoToDashboard = () => {
+    router.push('/dashboard');
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
 
@@ -91,13 +109,19 @@ export default function UploadPage() {
       const result = await createArtwork(formData);
 
       if (result.success) {
+        // success! save data for dialog and show it
+        setSubmittedData({
+          title: values.title,
+          description: values.description,
+          imageUrl: imagePreview // Use the preview URL since it's already available
+        });
+        setShowSuccessDialog(true);
+
+        // Optional: still show a toast or keep it silent since dialog appears
         toast({
           title: 'Upload Successful!',
-          description: `Your artwork "${values.title}" has been submitted.`,
+          description: 'Your artwork has been created.',
         });
-        // Delay redirect slightly for effect? No, immediate is better.
-        router.push('/dashboard');
-        router.refresh();
       } else {
         toast({
           title: 'Upload Failed',
@@ -354,6 +378,47 @@ export default function UploadPage() {
           </div>
         </div>
       </div>
+
+      {/* Success Dialog */}
+      <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <DialogContent className="max-w-2xl sm:max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold font-headline text-center mb-2">Artwork Published!</DialogTitle>
+            <DialogDescription className="text-center font-medium text-lg">
+              Your creative piece is now live for the world to see.
+            </DialogDescription>
+          </DialogHeader>
+
+          {submittedData && (
+            <div className="flex flex-col gap-6 py-4">
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl border bg-muted shadow-inner">
+                {submittedData.imageUrl && (
+                  <Image
+                    src={submittedData.imageUrl}
+                    alt={submittedData.title}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
+
+              <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold">{submittedData.title}</h3>
+                <p className="text-muted-foreground whitespace-pre-wrap max-h-[100px] overflow-y-auto">{submittedData.description}</p>
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-col sm:flex-row gap-3 sm:space-x-0 mt-4">
+            <Button variant="outline" size="lg" className="w-full sm:flex-1 h-12 text-base" onClick={handleCreateAnother}>
+              Create Another
+            </Button>
+            <Button size="lg" className="w-full sm:flex-1 h-12 text-base shadow-md" onClick={handleGoToDashboard}>
+              Go to Dashboard
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

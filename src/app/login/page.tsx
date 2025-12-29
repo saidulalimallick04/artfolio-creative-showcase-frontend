@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -11,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
-import { LayoutGrid } from 'lucide-react';
+import { LayoutGrid, Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
@@ -20,8 +21,16 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const preferredPage = localStorage.getItem('landingPage') || '/';
+      router.push(preferredPage);
+    }
+  }, [user, router]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,17 +45,22 @@ export default function LoginPage() {
   }
 
   async function handleLogin(email: string, password?: string) {
+    setIsLoading(true);
     try {
       const success = await login(email, password || 'password123');
       if (success) {
         toast({ title: 'Login successful!', description: 'Welcome back.' });
-        router.push('/profile');
+        // Redirect based on user preference or default to Home (Global Feed)
+        const preferredPage = localStorage.getItem('landingPage') || '/';
+        router.push(preferredPage);
+        // Don't set loading to false if redirecting, to prevent flash of content
       } else {
         toast({
           variant: 'destructive',
           title: 'Login failed.',
           description: 'Invalid email or password.',
         });
+        setIsLoading(false);
       }
     } catch (e) {
       toast({
@@ -54,6 +68,7 @@ export default function LoginPage() {
         title: 'Login error.',
         description: 'Something went wrong.',
       });
+      setIsLoading(false);
     }
   }
 
@@ -67,7 +82,7 @@ export default function LoginPage() {
             src="https://images.unsplash.com/flagged/photo-1572392640988-ba48d1a74457?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Creative artwork"
             fill
-            className="object-cover transition-transform duration-700 hover:scale-105"
+            className="object-cover animate-ken-burns"
             priority
             sizes="(max-width: 1024px) 100vw, 80vw"
             unoptimized
@@ -151,8 +166,19 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40">
-                Sign In
+              <Button
+                type="submit"
+                className="w-full h-11 font-medium text-base shadow-lg shadow-primary/20 transition-all hover:shadow-primary/40"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
               </Button>
             </form>
           </Form>

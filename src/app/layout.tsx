@@ -10,7 +10,10 @@ import BottomNav from '@/components/layout/bottom-nav';
 import { ThemeProvider } from '@/components/theme-provider';
 
 export const metadata: Metadata = {
-  title: 'ArtFolio',
+  title: {
+    default: 'ArtFolio',
+    template: '%s - ArtFolio',
+  },
   description: 'A creative showcase for artists to share their work.',
 };
 

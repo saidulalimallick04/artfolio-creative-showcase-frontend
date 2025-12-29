@@ -2,11 +2,21 @@ import { notFound } from 'next/navigation';
 import { getUserProfile, getUserArtworks } from '@/actions/users_action';
 import ProfileContent from '@/components/profile-content';
 
+import { Metadata } from 'next';
+
 type PublicProfilePageProps = {
   params: Promise<{
     username: string;
   }>;
 };
+
+export async function generateMetadata({ params }: PublicProfilePageProps): Promise<Metadata> {
+  const { username } = await params;
+  return {
+    title: username,
+    description: `Check out ${username}'s creative portfolio on ArtFolio.`,
+  };
+}
 
 export default async function PublicProfilePage({ params }: PublicProfilePageProps) {
   const { username } = await params;

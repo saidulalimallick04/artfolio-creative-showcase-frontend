@@ -10,7 +10,7 @@ import { Artwork } from '@/types/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LayoutGrid, List, Search, X, Plus, Settings, LogOut } from 'lucide-react';
+import { LayoutGrid, List, Search, X, Plus, Settings, LogOut, Edit2 } from 'lucide-react';
 import ProfileArtworkCard from '@/components/profile-artwork-card';
 import ArtworkActions from '@/components/artwork-actions';
 import { logoutUser } from '@/actions/auth_action';
@@ -81,6 +81,8 @@ export default function DashboardPage() {
     );
   }
 
+  if (!user) return null;
+
   const filteredArtworks = artworks.filter((artwork) =>
     artwork.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (artwork.description && artwork.description.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -92,7 +94,21 @@ export default function DashboardPage() {
 
         {/* Sidebar (User Info & Actions) */}
         <div className="md:col-span-1">
-          <div className="sticky top-24 space-y-6 p-6 rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm">
+          <div className="md:sticky md:top-24 space-y-6 p-6 rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm relative group">
+
+            {/* Edit Profile Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-2 right-2 h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+              asChild
+              title="Edit Profile"
+            >
+              <Link href="/account">
+                <Edit2 className="h-4 w-4" />
+              </Link>
+            </Button>
+
             <div className="flex flex-col items-center text-center">
               <Avatar className="h-32 w-32 border-4 border-background shadow-md mb-4">
                 <AvatarImage
