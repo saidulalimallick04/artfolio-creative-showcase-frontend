@@ -166,6 +166,24 @@ This document outlines the detailed 10-phase plan to integrate the **ArtFolio** 
     2. **Auth Persistence**: Updated Signup form `autocomplete` attributes to ensure browsers correctly save credentials.
     3. **Layout Overflow**: Fixed CSS overflow issues in the Account page redesign.
 
+## 💎 Phase 14: User Experience & Visual Refinement
+
+- **Goal**: Elevate the application's aesthetic and usability with advanced animations and responsive designs.
+- **Steps**:
+    1. **Authentication Flow**:
+        - Implemented automatic redirects for logged-in users away from Auth pages.
+        - Added conditional "Create Art" vs "Join Community" CTA on Hero section.
+    2. **Interactive Navigation**:
+        - Built an **Animated Search Bar** in the Navbar with smooth expand/collapse transitions using Framer Motion.
+        - Integrated a satisfying **Page Loading Progress Bar** within the floating header pill.
+    3. **Feedback Systems**:
+        - Redesigned **Toast Notifications** with a modern, glassmorphic look, variant-specific icons/colors, and improved mobile positioning.
+        - Created a comprehensive **Connection Error UI** (with "Refresh" and "Go Home" actions) to gracefully handle server outages on Infinite Scroll and Artist pages.
+    4. **Mobile Experience**:
+        - Designed a custom **Mobile Hero Grid** with a 3-row marquee animation (sliding left/right) and subtle rotation, replacing the static grid on small screens.
+    5. **Upload Success**:
+        - Replaced immediate redirect with a **Success Dialog**, offering options to "Create Another" or "Go to Dashboard".
+
 ---
 
 ## 👨‍💻 Author
