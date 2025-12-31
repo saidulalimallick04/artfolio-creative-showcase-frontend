@@ -10,7 +10,7 @@ export async function getUsers(query?: string) {
             : ENDPOINTS.USERS.LIST;
 
         const response = await fetch(url, {
-            next: { revalidate: 60 }, // Cache for 60 seconds
+            cache: 'no-store',
         });
 
         if (!response.ok) {

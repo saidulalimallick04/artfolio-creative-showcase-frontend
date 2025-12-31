@@ -5,12 +5,34 @@ import PageUtilities from '@/components/page-utilities';
 import { getUsers } from '@/actions/users_action';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { ConnectionErrorState } from '@/components/connection-error-state';
 import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export const dynamic = 'force-dynamic';
 
 export default async function ArtistsPage() {
   const result = await getUsers();
   const artists = result.success && result.data ? result.data : [];
+
+  if (!result.success) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <PageUtilities />
+        <header className="text-center mb-12">
+          <h1 className="font-headline text-4xl md:text-6xl font-bold tracking-tight mb-4">
+            Discover Artists
+          </h1>
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Browse our community of talented artists from around the world.
+          </p>
+        </header>
+        <div className="flex min-h-[50vh] flex-col items-center justify-center">
+          <ConnectionErrorState />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

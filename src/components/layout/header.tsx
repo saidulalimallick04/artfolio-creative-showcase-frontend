@@ -21,6 +21,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { RouteProgressBar } from '@/components/layout/route-progress-bar';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -74,7 +75,7 @@ export default function Header() {
         <header className="fixed top-0 left-0 right-0 z-50 flex justify-center">
             <motion.div
                 layout
-                className="mt-4 flex h-16 w-full max-w-screen-lg items-center justify-between rounded-full border border-border/40 bg-background/80 px-6 shadow-lg backdrop-blur-lg md:px-8 overflow-hidden"
+                className="relative mt-4 flex h-16 w-full max-w-screen-lg items-center justify-between rounded-full border border-border/40 bg-background/80 px-6 shadow-lg backdrop-blur-lg md:px-8 overflow-hidden"
             >
                 <AnimatePresence mode="wait">
                     {isSearchOpen ? (
@@ -246,6 +247,7 @@ export default function Header() {
                         </motion.div>
                     )}
                 </AnimatePresence>
+                <RouteProgressBar />
             </motion.div>
         </header>
     );

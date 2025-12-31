@@ -2,6 +2,7 @@
 
 import AnimatedTitle from './animated-title';
 import HeroImageGrid from './hero-image-grid';
+import MobileHeroGrid from './mobile-hero-grid';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -59,7 +60,11 @@ export default function HeroSection() {
                             </Button>
                         </Link>
                     )}
+
                 </motion.div>
+
+                {/* Mobile Hero Grid (Visible only on mobile, below text/buttons) */}
+                <MobileHeroGrid />
             </div>
 
             {/* Right Content - Image Grid */}

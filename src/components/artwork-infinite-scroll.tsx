@@ -6,6 +6,7 @@ import ImageMosaic from '@/components/image-mosaic';
 import { getArtworks } from '@/actions/artworks_action';
 import { Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ConnectionErrorState } from '@/components/connection-error-state';
 
 interface ArtworkInfiniteScrollProps {
     initialArtworks: Artwork[];
@@ -16,6 +17,9 @@ export default function ArtworkInfiniteScroll({ initialArtworks }: ArtworkInfini
     const [page, setPage] = useState(1); // Start from page 1 (since 0 is initial)
     const [loading, setLoading] = useState(false);
     const [hasMore, setHasMore] = useState(true);
+    const [isError, setIsError] = useState(false);
+    const [retryToken, setRetryToken] = useState(0);
+
     const observer = useRef<IntersectionObserver | null>(null);
     const { toast } = useToast();
     const LIMIT = 20;
@@ -25,13 +29,13 @@ export default function ArtworkInfiniteScroll({ initialArtworks }: ArtworkInfini
         if (observer.current) observer.current.disconnect();
 
         observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
+            if (entries[0].isIntersecting && hasMore && !isError) {
                 setPage(prevPage => prevPage + 1);
             }
         }, { threshold: 0.1, rootMargin: '100px' }); // Trigger a bit before strictly end
 
         if (node) observer.current.observe(node);
-    }, [loading, hasMore]);
+    }, [loading, hasMore, isError]);
 
 
     // Reset state when initialArtworks changes (e.g. on router.refresh())
@@ -39,6 +43,8 @@ export default function ArtworkInfiniteScroll({ initialArtworks }: ArtworkInfini
         setArtworks(initialArtworks);
         setPage(1);
         setHasMore(true);
+        setIsError(false);
+        setRetryToken(0);
     }, [initialArtworks]);
 
     useEffect(() => {
@@ -47,25 +53,10 @@ export default function ArtworkInfiniteScroll({ initialArtworks }: ArtworkInfini
 
         const loadMoreArtworks = async () => {
             setLoading(true);
-
-            // Calculate skip: (page ) * limit?? 
-            // Initial (page 0 implied): skip 0, limit 20.
-            // Page 1 state set -> Load next batch? 
-            // If page 1 means "fetch the 2nd batch", then skip = 1 * 20 = 20.
-            // Page 0 was 0-20. 
-            // Wait, standard: Page 1 = items 0-19. Page 2 = items 20-39.
-            // My state `page` starts at 1. But I already HAVE the first batch. 
-            // So `page=1` causing a fetch should fetch the SECOND batch.
-            // skip = page * LIMIT. (1 * 20 = 20).
-
-            const skip = page * LIMIT;
-            // Wait, if page started at 1, and I increment to 2. 
-            // Let's reset: 
-            // Initial server load: skip 0.
-            // First scroll -> setPage(prev => prev + 1). Page becomes 2.
-            // Effect runs. Skip = (2-1) * 20 = 20? 
-            // Let's stick to standard count. 
-            // Artworks length currently = 20. Skip = 20.
+            setIsError(false);
+            setHasMore(true); // Optimistically assume more, or keep previous state? 
+            // In error case, we set hasMore(false). Retrying should reset it? 
+            // Better to keep hasMore true if we are retrying.
 
             const currentCount = artworks.length;
             const result = await getArtworks(undefined, currentCount, LIMIT);
@@ -88,35 +79,48 @@ export default function ArtworkInfiniteScroll({ initialArtworks }: ArtworkInfini
                     }
                 }
             } else {
+                setHasMore(false);
+                setIsError(true);
                 toast({
                     variant: "destructive",
-                    title: "Error fetching more artworks",
-                    description: "Please try again later."
+                    title: "Connection Error",
+                    description: "Could not load more artworks. Server not responding."
                 });
             }
             setLoading(false);
         };
 
         loadMoreArtworks();
-    }, [page]); // Dependency on page increment
+    }, [page, retryToken]);
 
+    const handleRetry = () => {
+        setRetryToken(prev => prev + 1);
+        setHasMore(true); // Re-enable fetching flag
+    };
 
     return (
         <div className="space-y-8">
             <ImageMosaic artworks={artworks} />
 
+            {/* Error State */}
+            {isError && (
+                <ConnectionErrorState onRetry={handleRetry} />
+            )}
+
             {/* Loading / Scroll Trigger Metadata */}
-            <div className="py-8 flex justify-center items-center w-full min-h-[100px]" ref={lastArtworkElementRef}>
-                {loading && (
-                    <div className="flex flex-col items-center gap-2 text-muted-foreground animate-in fade-in duration-300">
-                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                        <span className="text-sm font-medium">Loading more inspiration...</span>
-                    </div>
-                )}
-                {!hasMore && artworks.length > 0 && (
-                    <p className="text-muted-foreground text-sm italic">You've reached the end.</p>
-                )}
-            </div>
+            {!isError && (
+                <div className="py-8 flex justify-center items-center w-full min-h-[100px]" ref={lastArtworkElementRef}>
+                    {loading && (
+                        <div className="flex flex-col items-center gap-2 text-muted-foreground animate-in fade-in duration-300">
+                            <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                            <span className="text-sm font-medium">Loading more inspiration...</span>
+                        </div>
+                    )}
+                    {!hasMore && artworks.length > 0 && (
+                        <p className="text-muted-foreground text-sm italic">You've reached the end.</p>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
